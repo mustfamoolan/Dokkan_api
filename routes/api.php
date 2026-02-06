@@ -82,6 +82,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('cash-accounts', \App\Http\Controllers\Api\CashAccountController::class);
     Route::patch('cash-accounts/{cashAccount}/status', [\App\Http\Controllers\Api\CashAccountController::class, 'toggleStatus']);
 
+    Route::get('opening-balances/status', [\App\Http\Controllers\Api\OpeningBalanceController::class, 'status']);
+    Route::post('opening-balances', [\App\Http\Controllers\Api\OpeningBalanceController::class, 'store']);
+
     Route::post('receipts', [\App\Http\Controllers\Api\ReceiptController::class, 'store']);
     Route::get('receipts/{receipt}', [\App\Http\Controllers\Api\ReceiptController::class, 'show']);
     Route::post('receipts/{receipt}/allocate', [\App\Http\Controllers\Api\ReceiptController::class, 'allocate']);
