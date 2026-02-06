@@ -71,4 +71,17 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('sales-returns', [\App\Http\Controllers\Api\SalesReturnController::class, 'store']);
     Route::post('sales-returns/{return}/post', [\App\Http\Controllers\Api\SalesReturnController::class, 'post']);
+
+    // Finance (Stage 7)
+    Route::apiResource('cash-accounts', \App\Http\Controllers\Api\CashAccountController::class);
+
+    Route::post('receipts', [\App\Http\Controllers\Api\ReceiptController::class, 'store']);
+    Route::get('receipts/{receipt}', [\App\Http\Controllers\Api\ReceiptController::class, 'show']);
+    Route::post('receipts/{receipt}/allocate', [\App\Http\Controllers\Api\ReceiptController::class, 'allocate']);
+    Route::post('receipts/{receipt}/post', [\App\Http\Controllers\Api\ReceiptController::class, 'post']);
+
+    Route::post('payments', [\App\Http\Controllers\Api\PaymentController::class, 'store']);
+    Route::get('payments/{payment}', [\App\Http\Controllers\Api\PaymentController::class, 'show']);
+    Route::post('payments/{payment}/allocate', [\App\Http\Controllers\Api\PaymentController::class, 'allocate']);
+    Route::post('payments/{payment}/post', [\App\Http\Controllers\Api\PaymentController::class, 'post']);
 });
