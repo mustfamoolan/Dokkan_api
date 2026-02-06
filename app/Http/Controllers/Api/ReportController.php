@@ -40,9 +40,8 @@ class ReportController extends Controller
 
     public function cashMovements(Request $request)
     {
-        $request->validate(['cash_account_id' => 'required|exists:cash_accounts,id']);
         return response()->json(
-            $this->reportService->getCashMovements($request->cash_account_id, $request->date_from, $request->date_to)
+            $this->reportService->getCashMovements($request->date_from, $request->date_to)
         );
     }
 

@@ -13,7 +13,6 @@ class PaymentController extends Controller
     {
         $payment = Payment::create([
             'payment_no' => 'PY-' . time(),
-            'cash_account_id' => $request->cash_account_id,
             'party_id' => $request->party_id,
             'supplier_id' => $request->supplier_id,
             'expense_account_id' => $request->expense_account_id,

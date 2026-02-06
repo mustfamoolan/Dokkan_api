@@ -39,8 +39,9 @@ class ReceiptObserver
                     'created_by' => auth()->id(),
                 ]);
 
-                // Debit: Cash/Bank Account (From CashAccount Link)
-                $cashGlAccount = $receipt->cashAccount->account_id;
+                // Debit: Cashbox (Main Cash 1101)
+                $cashAccount = Account::where('account_code', '1101')->first();
+                $cashGlAccount = $cashAccount->id;
 
                 JournalEntryLine::create([
                     'journal_entry_id' => $journal->id,

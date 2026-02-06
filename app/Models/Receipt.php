@@ -11,7 +11,6 @@ class Receipt extends Model
 
     protected $fillable = [
         'receipt_no',
-        'cash_account_id',
         'party_id',
         'customer_id',
         'receipt_type',
@@ -21,11 +20,6 @@ class Receipt extends Model
         'created_by',
         'notes',
     ];
-
-    public function cashAccount()
-    {
-        return $this->belongsTo(CashAccount::class);
-    }
 
     public function customer()
     {

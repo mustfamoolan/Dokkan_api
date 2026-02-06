@@ -65,8 +65,6 @@
 ---
 
 ## 6. المالية والتحصيل (Finance & Cash)
-- `GET /cash-accounts`: حسابات الصندوق والبنك.
-- `PATCH /cash-accounts/{id}/status`: تفعيل/تعطيل حساب صندوق/بنك.
 - `POST /receipts`: إنشاء سند قبض (من زبون).
 - `POST /receipts/{id}/post`: ترحيل سند القبض.
 - `POST /payments`: إنشاء سند صرف (لمورد أو مصروف).
@@ -94,7 +92,7 @@
 - `GET /reports/staff-financials`: كشف مالي للموظف (سلف ورواتب).
 - `GET /reports/debts-summary`: ملخص الديون (ما لنا وما علينا).
 - `GET /reports/profit-summary`: ملخص الأرباح (صافي وإجمالي).
-- `GET /reports/cash-movements`: حركة الصندوق.
+- `GET /reports/cash-movements`: حركة الصندوق الرئيسي.
 - `GET /reports/product-movement`: حركة مادة معينة.
 - `GET /reports/product-profit`: أرباح كل منتج.
 - `GET /reports/customer-profit`: أرباح كل زبون.

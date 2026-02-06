@@ -171,14 +171,14 @@ class ReportService
     }
 
     // G. Cash Movement
-    public function getCashMovements($cashAccountId, $from = null, $to = null)
+    public function getCashMovements($from = null, $to = null)
     {
-        $in = Receipt::where('cash_account_id', $cashAccountId)->where('status', 'posted')
+        $in = Receipt::where('status', 'posted')
             ->when($from, fn($q) => $q->whereDate('created_at', '>=', $from))
             ->when($to, fn($q) => $q->whereDate('created_at', '<=', $to))
             ->sum('amount_iqd');
 
-        $out = Payment::where('cash_account_id', $cashAccountId)->where('status', 'posted')
+        $out = Payment::where('status', 'posted')
             ->when($from, fn($q) => $q->whereDate('created_at', '>=', $from))
             ->when($to, fn($q) => $q->whereDate('created_at', '<=', $to))
             ->sum('amount_iqd');

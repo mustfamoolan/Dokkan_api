@@ -15,7 +15,6 @@ class ReceiptController extends Controller
         // Validation...
         $receipt = Receipt::create([
             'receipt_no' => 'RC-' . time(),
-            'cash_account_id' => $request->cash_account_id,
             'party_id' => $request->party_id,
             'customer_id' => $request->customer_id,
             'receipt_type' => $request->receipt_type,

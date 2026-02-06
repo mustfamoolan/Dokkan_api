@@ -35,8 +35,9 @@ class PaymentObserver
                     'created_by' => auth()->id(),
                 ]);
 
-                // Credit: Cash/Bank Account
-                $cashGlAccount = $payment->cashAccount->account_id;
+                // Credit: Cashbox (Main Cash 1101)
+                $cashAccount = Account::where('account_code', '1101')->first();
+                $cashGlAccount = $cashAccount->id;
 
                 JournalEntryLine::create([
                     'journal_entry_id' => $journal->id,

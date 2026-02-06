@@ -37,7 +37,7 @@ class OpeningBalanceController extends Controller
 
         $request->validate([
             'date' => 'required|date',
-            'cash_balances' => 'array', // [{account_id, amount}]
+            'opening_cash' => 'required|numeric',
             'supplier_balances' => 'array', // [{supplier_id, amount}]
             'customer_balances' => 'array', // [{customer_id, amount}]
             'inventory_items' => 'array', // [{product_id, warehouse_id, quantity, unit_cost}]
@@ -104,13 +104,13 @@ class OpeningBalanceController extends Controller
                 }
             }
 
-            // 3. Process Cash Balances
-            foreach ($request->cash_balances as $cash) {
-                // $cash['account_id'] refers to the Cash Account's GL account
+            // 3. Process Cash Balance (Hardcoded to 1101)
+            $cashAccount = Account::where('account_code', '1101')->first();
+            if ($cashAccount && $request->opening_cash > 0) {
                 JournalEntryLine::create([
                     'journal_entry_id' => $entry->id,
-                    'account_id' => $cash['account_id'],
-                    'debit_amount' => $cash['amount'],
+                    'account_id' => $cashAccount->id,
+                    'debit_amount' => $request->opening_cash,
                     'credit_amount' => 0,
                 ]);
             }
@@ -146,8 +146,8 @@ class OpeningBalanceController extends Controller
                 }
             }
 
-            // 6. Capital (Credit Equity)
-            $capitalAccount = Account::where('type', 'equity')->first();
+            // 6. Capital (3101)
+            $capitalAccount = Account::where('account_code', '3101')->first();
             if ($capitalAccount) {
                 JournalEntryLine::create([
                     'journal_entry_id' => $entry->id,

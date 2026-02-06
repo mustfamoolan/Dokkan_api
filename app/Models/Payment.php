@@ -11,7 +11,6 @@ class Payment extends Model
 
     protected $fillable = [
         'payment_no',
-        'cash_account_id',
         'party_id',
         'supplier_id',
         'staff_id',
@@ -23,11 +22,6 @@ class Payment extends Model
         'created_by',
         'notes',
     ];
-
-    public function cashAccount()
-    {
-        return $this->belongsTo(CashAccount::class);
-    }
 
     public function allocations()
     {
