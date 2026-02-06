@@ -22,4 +22,9 @@ class Customer extends Model
     {
         return $this->belongsTo(Account::class);
     }
+
+    public function addresses()
+    {
+        return $this->hasMany(CustomerAddress::class);
+    }
 }
