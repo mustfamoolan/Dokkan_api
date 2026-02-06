@@ -58,4 +58,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('customers/{customer}/addresses', [\App\Http\Controllers\Api\CustomerAddressController::class, 'store']);
     Route::put('customers/{customer}/addresses/{address}', [\App\Http\Controllers\Api\CustomerAddressController::class, 'update']);
     Route::delete('customers/{customer}/addresses/{address}', [\App\Http\Controllers\Api\CustomerAddressController::class, 'destroy']);
+
+    // Sales
+    Route::post('sales-invoices', [\App\Http\Controllers\Api\SalesInvoiceController::class, 'store']);
+    Route::post('sales-invoices/{invoice}/submit', [\App\Http\Controllers\Api\SalesInvoiceController::class, 'submit']);
+    Route::post('sales-invoices/{invoice}/approve', [\App\Http\Controllers\Api\SalesInvoiceController::class, 'approve']);
+    Route::post('sales-invoices/{invoice}/start-preparing', [\App\Http\Controllers\Api\SalesInvoiceController::class, 'startPreparing']);
+    Route::post('sales-invoices/{invoice}/mark-prepared', [\App\Http\Controllers\Api\SalesInvoiceController::class, 'markPrepared']);
+    Route::post('sales-invoices/{invoice}/assign-driver', [\App\Http\Controllers\Api\SalesInvoiceController::class, 'assignDriver']);
+    Route::post('sales-invoices/{invoice}/out-for-delivery', [\App\Http\Controllers\Api\SalesInvoiceController::class, 'outForDelivery']);
+    Route::post('sales-invoices/{invoice}/mark-delivered', [\App\Http\Controllers\Api\SalesInvoiceController::class, 'markDelivered']);
+
+    Route::post('sales-returns', [\App\Http\Controllers\Api\SalesReturnController::class, 'store']);
+    Route::post('sales-returns/{return}/post', [\App\Http\Controllers\Api\SalesReturnController::class, 'post']);
 });
