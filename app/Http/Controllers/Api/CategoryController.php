@@ -17,12 +17,18 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|unique:product_categories,name',
+            'name' => 'required_without:category_name|string|unique:product_categories,name',
+            'category_name' => 'required_without:name|string|unique:product_categories,name',
             'parent_id' => 'nullable|exists:product_categories,id',
         ]);
 
-        $category = ProductCategory::create($request->all());
-        return response()->json($category, 201);
+        $data = $request->all();
+        if (isset($data['category_name']) && !isset($data['name'])) {
+            $data['name'] = $data['category_name'];
+        }
+
+        $category = ProductCategory::create($data);
+        return new CategoryResource($category);
     }
 
     public function show(ProductCategory $category)
@@ -33,13 +39,19 @@ class CategoryController extends Controller
     public function update(Request $request, ProductCategory $category)
     {
         $request->validate([
-            'name' => 'required|string|unique:product_categories,name,' . $category->id,
+            'name' => 'required_without:category_name|string|unique:product_categories,name,' . $category->id,
+            'category_name' => 'sometimes|string|unique:product_categories,name,' . $category->id,
             'parent_id' => 'nullable|exists:product_categories,id',
             'is_active' => 'boolean',
         ]);
 
-        $category->update($request->all());
-        return response()->json($category);
+        $data = $request->all();
+        if (isset($data['category_name']) && !isset($data['name'])) {
+            $data['name'] = $data['category_name'];
+        }
+
+        $category->update($data);
+        return new CategoryResource($category);
     }
 
     public function toggleStatus(ProductCategory $category)

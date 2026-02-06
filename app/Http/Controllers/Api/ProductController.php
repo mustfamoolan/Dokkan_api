@@ -23,23 +23,26 @@ class ProductController extends Controller
 
     public function store(StoreProductRequest $request)
     {
-        $product = Product::create($request->validated());
+        $data = $request->validated();
+        if (isset($data['name_ar']) && !isset($data['name'])) {
+            $data['name'] = $data['name_ar'];
+        }
 
-        return response()->json(['message' => 'تم إنشاء المنتج بنجاح', 'product' => $product], 201);
+        $product = Product::create($data);
+
+        return new ProductResource($product);
     }
 
     public function update(Request $request, Product $product)
     {
-        // Simple validation for update for brevity, real app might use separate request class
-        $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'sku' => 'nullable|string|unique:products,sku,' . $product->id,
-            'purchase_price' => 'numeric|min:0',
-        ]);
+        $data = $request->all();
+        if (isset($data['name_ar']) && !isset($data['name'])) {
+            $data['name'] = $data['name_ar'];
+        }
 
-        $product->update($request->all());
+        $product->update($data);
 
-        return response()->json(['message' => 'تم تحديث المنتج', 'product' => $product]);
+        return new ProductResource($product);
     }
 
     public function syncSuppliers(Request $request, Product $product)

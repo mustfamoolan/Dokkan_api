@@ -28,11 +28,7 @@ class SupplierController extends Controller
 
         $supplier = Supplier::create($validated);
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Supplier created successfully',
-            'supplier' => $supplier->load('account')
-        ], 201);
+        return new SupplierResource($supplier->load('account'));
     }
 
     public function show(Supplier $supplier)
@@ -54,11 +50,7 @@ class SupplierController extends Controller
 
         $supplier->update($validated);
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Supplier updated successfully',
-            'supplier' => $supplier->load('account')
-        ]);
+        return new SupplierResource($supplier->load('account'));
     }
 
     public function destroy(Supplier $supplier)

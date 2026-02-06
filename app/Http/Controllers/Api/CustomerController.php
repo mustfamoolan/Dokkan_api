@@ -4,20 +4,23 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
+use App\Http\Resources\CustomerResource;
 use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
     public function index()
     {
-        return response()->json(Customer::with('account', 'addresses')->get());
+        return CustomerResource::collection(Customer::with('account', 'addresses')->get());
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'phone' => 'required|string|max:20',
+            'name' => 'required_without:customer_name|string|max:255',
+            'customer_name' => 'required_without:name|string|max:255',
+            'phone' => 'required_without:phone_number|string|max:20',
+            'phone_number' => 'required_without:phone|string|max:20',
             'address' => 'nullable|string',
             'sales_type' => 'required|in:cash,credit',
             'credit_limit' => 'numeric|min:0',
@@ -25,18 +28,21 @@ class CustomerController extends Controller
             'is_active' => 'boolean',
         ]);
 
+        if (isset($validated['customer_name']) && !isset($validated['name'])) {
+            $validated['name'] = $validated['customer_name'];
+        }
+        if (isset($validated['phone_number']) && !isset($validated['phone'])) {
+            $validated['phone'] = $validated['phone_number'];
+        }
+
         $customer = Customer::create($validated);
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Customer created successfully',
-            'customer' => $customer->load('account', 'addresses')
-        ], 201);
+        return new CustomerResource($customer->load('account', 'addresses'));
     }
 
     public function show(Customer $customer)
     {
-        return response()->json($customer->load('account', 'addresses'));
+        return new CustomerResource($customer->load('account', 'addresses'));
     }
 
     public function update(Request $request, Customer $customer)
@@ -51,13 +57,17 @@ class CustomerController extends Controller
             'is_active' => 'boolean',
         ]);
 
-        $customer->update($validated);
+        $data = $request->all();
+        if (isset($data['customer_name']) && !isset($data['name'])) {
+            $data['name'] = $data['customer_name'];
+        }
+        if (isset($data['phone_number']) && !isset($data['phone'])) {
+            $data['phone'] = $data['phone_number'];
+        }
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Customer updated successfully',
-            'customer' => $customer->load('account', 'addresses')
-        ]);
+        $customer->update($data);
+
+        return new CustomerResource($customer->load('account', 'addresses'));
     }
 
     public function destroy(Customer $customer)
