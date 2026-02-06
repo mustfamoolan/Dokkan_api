@@ -23,6 +23,14 @@ class Product extends Model
         'is_active',
     ];
 
+    protected $casts = [
+        'is_active' => 'boolean',
+        'has_pack' => 'boolean',
+        'purchase_price' => 'decimal:2',
+        'sale_price_retail' => 'decimal:2',
+        'sale_price_wholesale' => 'decimal:2',
+    ];
+
     public function category()
     {
         return $this->belongsTo(ProductCategory::class, 'category_id');

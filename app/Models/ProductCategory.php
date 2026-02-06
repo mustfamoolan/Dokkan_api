@@ -11,6 +11,10 @@ class ProductCategory extends Model
 
     protected $fillable = ['name', 'parent_id', 'is_active'];
 
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
+
     public function parent()
     {
         return $this->belongsTo(ProductCategory::class, 'parent_id');

@@ -20,6 +20,12 @@ class Supplier extends Model
         'is_active',
     ];
 
+    protected $casts = [
+        'is_active' => 'boolean',
+        'exchange_rate' => 'decimal:6',
+        'opening_balance' => 'decimal:2',
+    ];
+
     public function account()
     {
         return $this->belongsTo(Account::class);

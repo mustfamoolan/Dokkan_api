@@ -11,6 +11,11 @@ class Unit extends Model
 
     protected $fillable = ['name', 'is_base', 'is_active'];
 
+    protected $casts = [
+        'is_base' => 'boolean',
+        'is_active' => 'boolean',
+    ];
+
     public function scopeBase($query)
     {
         return $query->where('is_base', true);
