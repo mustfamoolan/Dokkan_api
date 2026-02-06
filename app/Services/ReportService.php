@@ -231,6 +231,12 @@ class ReportService
         return [
             'period' => $periodMonth,
             'total_sales_iqd' => $sales,
+            'commission_earned' => $comm ? $comm->commission_iqd : 0,
+            'targets_bonus' => $comm ? $comm->targets_bonus_iqd : 0,
+            'total_income' => $comm ? $comm->total_due_iqd : 0
+        ];
+    }
+
     // 3. Customer Purchases
     public function getCustomerPurchases($customerId, $from = null, $to = null)
     {
