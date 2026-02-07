@@ -37,10 +37,10 @@ class OpeningBalanceController extends Controller
 
         $request->validate([
             'date' => 'required|date',
-            'opening_cash' => 'required|numeric',
-            'supplier_balances' => 'array', // [{supplier_id, amount}]
-            'customer_balances' => 'array', // [{customer_id, amount}]
-            'inventory_items' => 'array', // [{product_id, warehouse_id, quantity, unit_cost}]
+            'opening_cash' => 'nullable|numeric|min:0',
+            'supplier_balances' => 'nullable|array', // [{supplier_id, amount}]
+            'customer_balances' => 'nullable|array', // [{customer_id, amount}]
+            'inventory_items' => 'nullable|array', // [{product_id, warehouse_id, quantity, unit_cost}]
             'capital' => 'required|numeric',
         ]);
 
@@ -105,14 +105,17 @@ class OpeningBalanceController extends Controller
             }
 
             // 3. Process Cash Balance (Hardcoded to 1101)
-            $cashAccount = Account::where('account_code', '1101')->first();
-            if ($cashAccount && $request->opening_cash > 0) {
-                JournalEntryLine::create([
-                    'journal_entry_id' => $entry->id,
-                    'account_id' => $cashAccount->id,
-                    'debit_amount' => $request->opening_cash,
-                    'credit_amount' => 0,
-                ]);
+            $opening_cash = $request->opening_cash ?? 0;
+            if ($opening_cash > 0) {
+                $cashAccount = Account::where('account_code', '1101')->first();
+                if ($cashAccount) {
+                    JournalEntryLine::create([
+                        'journal_entry_id' => $entry->id,
+                        'account_id' => $cashAccount->id,
+                        'debit_amount' => $opening_cash,
+                        'credit_amount' => 0,
+                    ]);
+                }
             }
 
             // 4. Process Customer Balances (Debit Assets)
