@@ -15,6 +15,7 @@ class SalesInvoice extends Model
         'source_user_id',
         'party_id',
         'customer_id',
+        'agent_id',
         'payment_type',
         'due_date',
         'delivery_required',
@@ -50,6 +51,11 @@ class SalesInvoice extends Model
     public function customer()
     {
         return $this->belongsTo(Customer::class);
+    }
+
+    public function agent()
+    {
+        return $this->belongsTo(SalesAgent::class);
     }
 
     public function driver()
