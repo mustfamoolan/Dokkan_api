@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::table('products', function (Blueprint $table) {
             $table->decimal('piece_weight', 10, 3)->default(0)->after('units_per_pack')->comment('وزن القطعة الواحدة');
-            $table->string('weight_unit', 10)->default('kg')->after('piece_weight')->comment('وحدة الوزن (kg, g, lb)');
+            $table->string('weight_unit', 20)->default('كغم')->after('piece_weight')->comment('وحدة الوزن (كغم, غم, لتر, مل)');
             $table->decimal('carton_weight', 10, 3)->default(0)->after('weight_unit')->comment('وزن الكارتون (محسوب تلقائياً)');
         });
     }
