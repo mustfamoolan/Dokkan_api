@@ -121,13 +121,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('opening-balances/status', [\App\Http\Controllers\Api\OpeningBalanceController::class, 'status']);
     Route::post('opening-balances', [\App\Http\Controllers\Api\OpeningBalanceController::class, 'store']);
 
-    Route::post('receipts', [\App\Http\Controllers\Api\ReceiptController::class, 'store']);
-    Route::get('receipts/{receipt}', [\App\Http\Controllers\Api\ReceiptController::class, 'show']);
+    Route::apiResource('receipts', \App\Http\Controllers\Api\ReceiptController::class);
     Route::post('receipts/{receipt}/allocate', [\App\Http\Controllers\Api\ReceiptController::class, 'allocate']);
     Route::post('receipts/{receipt}/post', [\App\Http\Controllers\Api\ReceiptController::class, 'post']);
 
-    Route::post('payments', [\App\Http\Controllers\Api\PaymentController::class, 'store']);
-    Route::get('payments/{payment}', [\App\Http\Controllers\Api\PaymentController::class, 'show']);
+    Route::apiResource('payments', \App\Http\Controllers\Api\PaymentController::class);
     Route::post('payments/{payment}/allocate', [\App\Http\Controllers\Api\PaymentController::class, 'allocate']);
     Route::post('payments/{payment}/post', [\App\Http\Controllers\Api\PaymentController::class, 'post']);
 

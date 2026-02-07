@@ -9,12 +9,27 @@ use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
+    public function index()
+    {
+        return response()->json(Payment::latest()->get());
+    }
+
     public function store(Request $request)
     {
+        $request->validate([
+            'payment_type' => 'required|in:supplier_payment,expense,salary_payment,advance',
+            'amount_iqd' => 'required|numeric|min:0.01',
+            'supplier_id' => 'required_if:payment_type,supplier_payment|exists:suppliers,id',
+            'expense_account_id' => 'required_if:payment_type,expense|exists:accounts,id',
+            'staff_id' => 'required_if:payment_type,advance,salary_payment|exists:staff,id',
+            'notes' => 'nullable|string',
+        ]);
+
         $payment = Payment::create([
             'payment_no' => 'PY-' . time(),
             'party_id' => $request->party_id,
             'supplier_id' => $request->supplier_id,
+            'staff_id' => $request->staff_id,
             'expense_account_id' => $request->expense_account_id,
             'payment_type' => $request->payment_type,
             'amount_iqd' => $request->amount_iqd,
@@ -51,5 +66,14 @@ class PaymentController extends Controller
     public function show(Payment $payment)
     {
         return response()->json($payment->load('allocations.invoice'));
+    }
+
+    public function destroy(Payment $payment)
+    {
+        if ($payment->status !== 'draft') {
+            return response()->json(['message' => 'Cannot delete posted payment'], 400);
+        }
+        $payment->delete();
+        return response()->json(['message' => 'Payment deleted']);
     }
 }

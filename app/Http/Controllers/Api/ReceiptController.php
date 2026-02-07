@@ -10,9 +10,21 @@ use Illuminate\Support\Facades\DB;
 
 class ReceiptController extends Controller
 {
+    public function index()
+    {
+        return response()->json(Receipt::with(['customer'])->latest()->get());
+    }
+
     public function store(Request $request)
     {
-        // Validation...
+        $request->validate([
+            'receipt_type' => 'required|in:customer_payment,other_income',
+            'amount_iqd' => 'required|numeric|min:0.01',
+            'customer_id' => 'required_if:receipt_type,customer_payment|exists:customers,id',
+            'party_id' => 'nullable|exists:parties,id',
+            'notes' => 'nullable|string',
+        ]);
+
         $receipt = Receipt::create([
             'receipt_no' => 'RC-' . time(),
             'party_id' => $request->party_id,
@@ -46,13 +58,24 @@ class ReceiptController extends Controller
     {
         if ($receipt->status !== 'draft')
             abort(400, 'Invalid status');
+
         $receipt->update(['status' => 'posted']);
-        // Observer handles Logic
+        // Observer handles Journal Entry creation
+
         return response()->json(['message' => 'Receipt posted']);
     }
 
     public function show(Receipt $receipt)
     {
-        return response()->json($receipt->load('allocations.invoice'));
+        return response()->json($receipt->load(['allocations.invoice', 'customer']));
+    }
+
+    public function destroy(Receipt $receipt)
+    {
+        if ($receipt->status !== 'draft') {
+            return response()->json(['message' => 'Cannot delete posted receipt'], 400);
+        }
+        $receipt->delete();
+        return response()->json(['message' => 'Receipt deleted']);
     }
 }
