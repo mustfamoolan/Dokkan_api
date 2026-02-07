@@ -67,6 +67,23 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('purchase-returns', [\App\Http\Controllers\Api\PurchaseReturnController::class, 'store']);
     Route::post('purchase-returns/{purchaseReturn}/post', [\App\Http\Controllers\Api\PurchaseReturnController::class, 'post']);
 
+    // Sales Agents
+    Route::apiResource('sales-agents', \App\Http\Controllers\Api\SalesAgentController::class);
+    Route::post('sales-agents/{salesAgent}/calculate-commission', [\App\Http\Controllers\Api\SalesAgentController::class, 'calculateCommission']);
+
+    // Agent Targets
+    Route::apiResource('agent-targets', \App\Http\Controllers\Api\AgentTargetController::class);
+    Route::post('agent-targets/calculate-bonus', [\App\Http\Controllers\Api\AgentTargetController::class, 'calculateBonus']);
+
+    // Sales Invoices
+    Route::apiResource('sales-invoices', \App\Http\Controllers\Api\SalesInvoiceController::class);
+    Route::post('sales-invoices/{invoice}/submit', [\App\Http\Controllers\Api\SalesInvoiceController::class, 'submit']);
+    Route::post('sales-invoices/{invoice}/approve', [\App\Http\Controllers\Api\SalesInvoiceController::class, 'approve']);
+    Route::post('sales-invoices/{invoice}/start-preparing', [\App\Http\Controllers\Api\SalesInvoiceController::class, 'startPreparing']);
+
+    Route::post('purchase-returns', [\App\Http\Controllers\Api\PurchaseReturnController::class, 'store']);
+    Route::post('purchase-returns/{purchaseReturn}/post', [\App\Http\Controllers\Api\PurchaseReturnController::class, 'post']);
+
     // Pre-Stage 6 (Staff & Workflow)
     Route::apiResource('staff', \App\Http\Controllers\Api\StaffController::class);
     Route::get('customers/{customer}/addresses', [\App\Http\Controllers\Api\CustomerAddressController::class, 'index']);
