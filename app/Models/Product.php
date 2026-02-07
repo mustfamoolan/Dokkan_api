@@ -20,6 +20,9 @@ class Product extends Model
         'has_pack',
         'pack_unit_id',
         'units_per_pack',
+        'piece_weight',
+        'weight_unit',
+        'carton_weight',
         'is_active',
     ];
 
@@ -29,6 +32,8 @@ class Product extends Model
         'purchase_price' => 'decimal:2',
         'sale_price_retail' => 'decimal:2',
         'sale_price_wholesale' => 'decimal:2',
+        'piece_weight' => 'decimal:3',
+        'carton_weight' => 'decimal:3',
     ];
 
     public function category()
