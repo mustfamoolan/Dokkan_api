@@ -11,12 +11,17 @@ class Supplier extends Model
 
     protected $fillable = [
         'name',
+        'contact_person',
         'phone',
+        'email',
         'address',
+        'tax_number',
         'currency',
         'exchange_rate',
         'account_id',
         'opening_balance',
+        'notes',
+        'profile_image',
         'is_active',
     ];
 

@@ -20,12 +20,14 @@ class StoreProductRequest extends FormRequest
             'category_id' => 'required|exists:product_categories,id',
             'purchase_price' => 'nullable|numeric|min:0',
             'sale_price_retail' => 'nullable|numeric|min:0',
+            'retail_price' => 'nullable|numeric|min:0', // Alias
             'sale_price_wholesale' => 'nullable|numeric|min:0',
+            'wholesale_price' => 'nullable|numeric|min:0', // Alias
             'base_unit_id' => 'required|exists:units,id',
             'has_pack' => 'boolean',
-            // Pack fields required if has_pack is true
             'pack_unit_id' => 'required_if:has_pack,true|nullable|exists:units,id',
-            'units_per_pack' => 'required_if:has_pack,true|nullable|numeric|min:1',
+            'units_per_pack' => 'nullable|numeric|min:1',
+            'pieces_per_carton' => 'nullable|numeric|min:1', // Alias
             'is_active' => 'boolean',
         ];
     }

@@ -24,9 +24,14 @@ class ProductController extends Controller
     public function store(StoreProductRequest $request)
     {
         $data = $request->validated();
-        if (isset($data['name_ar']) && !isset($data['name'])) {
+        if (isset($data['name_ar']) && !isset($data['name']))
             $data['name'] = $data['name_ar'];
-        }
+        if (isset($data['retail_price']) && !isset($data['sale_price_retail']))
+            $data['sale_price_retail'] = $data['retail_price'];
+        if (isset($data['wholesale_price']) && !isset($data['sale_price_wholesale']))
+            $data['sale_price_wholesale'] = $data['wholesale_price'];
+        if (isset($data['pieces_per_carton']) && !isset($data['units_per_pack']))
+            $data['units_per_pack'] = $data['pieces_per_carton'];
 
         $product = Product::create($data);
 
@@ -36,9 +41,14 @@ class ProductController extends Controller
     public function update(Request $request, Product $product)
     {
         $data = $request->all();
-        if (isset($data['name_ar']) && !isset($data['name'])) {
+        if (isset($data['name_ar']) && !isset($data['name']))
             $data['name'] = $data['name_ar'];
-        }
+        if (isset($data['retail_price']) && !isset($data['sale_price_retail']))
+            $data['sale_price_retail'] = $data['retail_price'];
+        if (isset($data['wholesale_price']) && !isset($data['sale_price_wholesale']))
+            $data['sale_price_wholesale'] = $data['wholesale_price'];
+        if (isset($data['pieces_per_carton']) && !isset($data['units_per_pack']))
+            $data['units_per_pack'] = $data['pieces_per_carton'];
 
         $product->update($data);
 
