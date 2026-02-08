@@ -17,8 +17,11 @@ class StorePurchaseInvoiceRequest extends FormRequest
             'supplier_id' => 'required|exists:suppliers,id',
             'supplier_invoice_no' => 'nullable|string',
             'invoice_date' => 'required|date',
+            'warehouse_id' => 'required|exists:warehouses,id',
             'currency' => 'required|in:IQD,USD',
-            'exchange_rate' => 'required|numeric|min:1', // Default 1 if IQD
+            'exchange_rate' => 'required|numeric|min:1',
+            'driver_fee' => 'numeric|min:0',
+            'worker_fee' => 'numeric|min:0',
             'discount_foreign' => 'numeric|min:0',
             'notes' => 'nullable|string',
             'lines' => 'required|array|min:1',
@@ -27,6 +30,8 @@ class StorePurchaseInvoiceRequest extends FormRequest
             'lines.*.unit_factor' => 'numeric|min:0.0001',
             'lines.*.qty' => 'required|numeric|min:0.01',
             'lines.*.price_foreign' => 'required|numeric|min:0',
+            'lines.*.sale_price_retail' => 'numeric|min:0',
+            'lines.*.sale_price_wholesale' => 'numeric|min:0',
             'lines.*.is_free' => 'boolean',
         ];
     }
