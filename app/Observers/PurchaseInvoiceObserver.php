@@ -93,9 +93,10 @@ class PurchaseInvoiceObserver
                     'credit_amount' => 0,
                 ]);
 
+                $payableAccount = \App\Models\Account::where('account_code', '2101')->first();
                 JournalEntryLine::create([
                     'journal_entry_id' => $journal->id,
-                    'account_id' => $invoice->supplier->account_id ?? 0,
+                    'account_id' => $invoice->supplier->account_id ?? $payableAccount->id,
                     'debit_amount' => 0,
                     'credit_amount' => $invoice->total_iqd,
                 ]);
@@ -104,7 +105,7 @@ class PurchaseInvoiceObserver
                     $cashAccount = \App\Models\Account::where('account_code', '1101')->first();
                     JournalEntryLine::create([
                         'journal_entry_id' => $journal->id,
-                        'account_id' => $invoice->supplier->account_id ?? 0,
+                        'account_id' => $invoice->supplier->account_id ?? $payableAccount->id,
                         'debit_amount' => $invoice->paid_iqd,
                         'credit_amount' => 0,
                     ]);
