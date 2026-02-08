@@ -26,6 +26,10 @@ class PurchaseInvoiceLine extends Model
         'notes',
     ];
 
+    protected $casts = [
+        'is_free' => 'boolean',
+    ];
+
     public function invoice()
     {
         return $this->belongsTo(PurchaseInvoice::class, 'purchase_invoice_id');
