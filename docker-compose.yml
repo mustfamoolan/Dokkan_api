@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
       target: production
-    container_name: al-waleed-api
+    container_name: dokkan_api-app
     restart: unless-stopped
     working_dir: /var/www/html
     volumes:
@@ -20,24 +20,24 @@ services:
       - APP_DEBUG=${APP_DEBUG:-false}
       - DB_HOST=mysql
       - DB_PORT=3306
-      - DB_DATABASE=${DB_DATABASE:-al_waleed_db}
-      - DB_USERNAME=${DB_USERNAME:-al_waleed_user}
-      - DB_PASSWORD=${DB_PASSWORD:-al_waleed_password}
+      - DB_DATABASE=${DB_DATABASE:-dokkan_api}
+      - DB_USERNAME=${DB_USERNAME:-dokkan_user}
+      - DB_PASSWORD=${DB_PASSWORD:-dokkan_password}
       - DB_ROOT_PASSWORD=${DB_ROOT_PASSWORD:-root_password}
     depends_on:
       mysql:
         condition: service_healthy
     networks:
-      - al-waleed-network
+      - dokkan_api-network
 
   mysql:
     image: mysql:8.0
-    container_name: al-waleed-mysql
+    container_name: dokkan_api-mysql
     restart: unless-stopped
     environment:
-      MYSQL_DATABASE: ${DB_DATABASE:-al_waleed_db}
-      MYSQL_USER: ${DB_USERNAME:-al_waleed_user}
-      MYSQL_PASSWORD: ${DB_PASSWORD:-al_waleed_password}
+      MYSQL_DATABASE: ${DB_DATABASE:-dokkan_api}
+      MYSQL_USER: ${DB_USERNAME:-dokkan_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-dokkan_password}
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root_password}
     ports:
       - "3306:3306"
@@ -49,13 +49,13 @@ services:
       timeout: 5s
       retries: 5
     networks:
-      - al-waleed-network
+      - dokkan_api-network
 
 volumes:
   mysql_data:
     driver: local
 
 networks:
-  al-waleed-network:
+  dokkan_api-network:
     driver: bridge
 
