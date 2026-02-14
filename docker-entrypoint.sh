@@ -51,7 +51,7 @@ php artisan migrate --force
 
 # Run seeders (only if manager doesn't exist)
 echo "Running seeders..."
-php artisan db:seed --class=ManagerSeeder --force
+php artisan db:seed --class=SuperAdminSeeder --force || true
 
 # Filament specific caching
 echo "Caching Filament components and icons..."
