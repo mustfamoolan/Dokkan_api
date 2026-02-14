@@ -24,6 +24,8 @@ CONFIG_FILE="/etc/nginx/sites-available/$DOMAIN"
 
 sudo tee $CONFIG_FILE > /dev/null <<EOF
 server {
+    listen 80;
+    listen [::]:80;
     server_name $DOMAIN www.$DOMAIN;
 
     location / {
