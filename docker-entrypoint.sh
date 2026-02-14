@@ -53,14 +53,9 @@ php artisan migrate --force
 echo "Running seeders..."
 php artisan db:seed --class=SuperAdminSeeder --force || true
 
-# Filament specific caching
-echo "Caching Filament components and icons..."
-php artisan filament:cache-components
-php artisan icons:cache
-
 # Create storage link for public files
 echo "Creating storage link..."
-php artisan storage:link
+php artisan storage:link || true
 
 # Optimize for production
 if [ "${APP_ENV}" = "production" ]; then
