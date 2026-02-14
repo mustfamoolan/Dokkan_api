@@ -21,13 +21,10 @@ class SubscriptionOverviewWidget extends BaseWidget
             ->orderBy('subscriptions_count')
             ->first();
 
-        // 2. Total Active Subscribers (Global)
+        // 3. Total Active Subscribers (Global)
         $totalActiveSubscribers = Subscription::where('end_date', '>', now())->count();
 
-        // 3. Total Monthly Revenue (Approximation based on active plans)
-        // Calculating sum of prices for all active subscriptions
-        // This assumes 'price' is monthly or standard. If plans have different durations, 
-        // to get true MRR we'd need to normalize. For now, we sum the face value of active plans.
+        // 4. Total Monthly Revenue
         $totalRevenue = Subscription::where('end_date', '>', now())
             ->join('subscription_plans', 'subscriptions.subscription_plan_id', '=', 'subscription_plans.id')
             ->sum('subscription_plans.price');

@@ -1,5 +1,5 @@
 # Multi-stage build for Laravel application
-FROM php:8.2-apache AS base
+FROM php:8.3-apache AS base
 
 # Set working directory
 WORKDIR /var/www/html
@@ -14,7 +14,9 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     libzip-dev \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip \
+    libicu-dev \
+    && docker-php-ext-configure intl \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip intl \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Composer
