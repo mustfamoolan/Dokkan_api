@@ -45,13 +45,6 @@ if [ ! -f "/var/www/html/.env" ]; then
     php artisan key:generate --force
 fi
 
-# Clear and cache config
-echo "Optimizing Laravel..."
-php artisan config:clear
-php artisan cache:clear
-php artisan route:clear
-php artisan view:clear
-
 # Run migrations
 echo "Running migrations..."
 php artisan migrate --force
@@ -59,6 +52,13 @@ php artisan migrate --force
 # Run seeders (only if manager doesn't exist)
 echo "Running seeders..."
 php artisan db:seed --class=ManagerSeeder || true
+
+# Clear and cache config
+echo "Optimizing Laravel..."
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+php artisan view:clear
 
 # Create storage link for public files
 echo "Creating storage link..."
