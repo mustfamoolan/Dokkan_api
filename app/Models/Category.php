@@ -7,36 +7,30 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
-class Product extends Model
+class Category extends Model
 {
     use MultiTenant, SoftDeletes;
 
     protected $fillable = [
         'uuid',
         'store_id',
-        'category_id',
         'name',
-        'barcode',
-        'purchase_price',
-        'sale_price',
+        'icon',
         'image_path',
-        'quantity',
-        'alert_quantity',
-        'notes',
     ];
 
     protected static function booted()
     {
         parent::booted();
-        static::creating(function ($product) {
-            if (empty($product->uuid)) {
-                $product->uuid = (string) Str::uuid();
+        static::creating(function ($category) {
+            if (empty($category->uuid)) {
+                $category->uuid = (string) Str::uuid();
             }
         });
     }
 
-    public function category()
+    public function products()
     {
-        return $this->belongsTo(Category::class);
+        return $this->hasMany(Product::class);
     }
 }
