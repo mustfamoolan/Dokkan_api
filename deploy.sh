@@ -70,7 +70,7 @@ docker compose exec -T app php artisan migrate --force || {
 
 # Run seeders (only if manager doesn't exist)
 echo -e "${YELLOW}🌱 Running seeders...${NC}"
-docker compose exec -T app php artisan db:seed --class=ManagerSeeder || {
+docker compose exec -T app php artisan db:seed --class=SuperAdminSeeder || {
     echo -e "${YELLOW}⚠️  Warning: Seeder failed or manager already exists, but continuing...${NC}"
 }
 
