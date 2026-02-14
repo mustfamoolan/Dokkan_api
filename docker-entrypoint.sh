@@ -51,28 +51,27 @@ php artisan migrate --force
 
 # Run seeders (only if manager doesn't exist)
 echo "Running seeders..."
-php artisan db:seed --class=ManagerSeeder || true
+php artisan db:seed --class=ManagerSeeder --force
 
-# Clear and cache config
-echo "Optimizing Laravel..."
-php artisan config:clear
-php artisan cache:clear
-php artisan route:clear
-php artisan view:clear
+# Filament specific caching
+echo "Caching Filament components and icons..."
+php artisan filament:cache-components
+php artisan icons:cache
 
 # Create storage link for public files
 echo "Creating storage link..."
-php artisan storage:link || true
+php artisan storage:link
 
 # Optimize for production
 if [ "${APP_ENV}" = "production" ]; then
     echo "Optimizing for production..."
-    php artisan config:cache || true
-    php artisan route:cache || true
-    php artisan view:cache || true
+    php artisan config:cache
+    # Note: we skip route:cache if component discovery errors occur,
+    # but we'll try it and let it fail gracefully if needed.
+    php artisan route:cache || echo "Route caching skipped due to errors."
+    php artisan view:cache
 fi
 
 # Start Apache
 echo "Starting Apache..."
 exec "$@"
-
