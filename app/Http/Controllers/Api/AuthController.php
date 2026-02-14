@@ -43,6 +43,53 @@ class AuthController extends Controller
         ]);
     }
 
+    public function register(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'required|string|unique:users,phone',
+            'password' => 'required|string|min:8',
+            'store_name' => 'required|string|max:255',
+            'device_name' => 'required|string',
+        ]);
+
+        \DB::beginTransaction();
+        try {
+            $user = User::create([
+                'name' => $request->name,
+                'phone' => $request->phone,
+                'password' => Hash::make($request->password),
+                'role' => 'owner',
+                'is_active' => true,
+            ]);
+
+            $store = \App\Models\Store::create([
+                'user_id' => $user->id,
+                'name' => $request->store_name,
+                'phone' => $request->phone,
+                'currency' => 'IQD', // Default for now
+            ]);
+
+            $user->stores()->attach($store->id, ['role' => 'owner']);
+
+            \DB::commit();
+
+            return response()->json([
+                'token' => $user->createToken($request->device_name)->plainTextToken,
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'phone' => $user->phone,
+                    'role' => $user->role,
+                ],
+                'store' => $store,
+            ], 201);
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            return response()->json(['message' => 'حدث خطأ أثناء إنشاء الحساب.'], 500);
+        }
+    }
+
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
