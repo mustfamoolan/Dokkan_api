@@ -60,11 +60,9 @@ php artisan storage:link || true
 # Optimize for production
 if [ "${APP_ENV}" = "production" ]; then
     echo "Optimizing for production..."
-    php artisan config:cache
-    # Note: we skip route:cache if component discovery errors occur,
-    # but we'll try it and let it fail gracefully if needed.
-    php artisan route:cache || echo "Route caching skipped due to errors."
-    php artisan view:cache
+    php artisan config:cache || true
+    php artisan route:cache || true
+    php artisan view:cache || true
 fi
 
 # Start Apache
