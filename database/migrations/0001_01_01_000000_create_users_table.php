@@ -14,10 +14,12 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->string('phone')->unique();
-            $table->string('password');
+            $table->string('password')->nullable();
+            $table->string('auth_provider')->default('phone');
+            $table->string('google_id')->nullable()->unique();
+            $table->enum('role', ['superadmin', 'owner', 'employee'])->default('owner');
+            $table->boolean('is_active')->default(true);
             $table->string('photo')->nullable();
-            $table->enum('role', ['manager', 'supervisor', 'employee'])->default('employee');
-            $table->enum('status', ['active', 'disabled'])->default('active');
             $table->rememberToken();
             $table->timestamps();
         });

@@ -1,0 +1,394 @@
+حسناً… الآن ندخل بالجزء الأخطر:
+تصميم الباك اند لنظام SaaS لتطبيق Dokkan.
+
+سأتكلم بمنطق معماري صحيح يناسب:
+
+نظام اشتراك شهري
+
+كل مستخدم يملك بياناته الخاصة
+
+دعم تسجيل برقم الهاتف + Google
+
+نظام محلات (multi-tenant)
+
+بدون تعقيد مبالغ به
+
+بدون صور… فقط هيكل منطقي واضح.
+
+أولاً: الفكرة الأساسية للباك اند (SaaS Architecture)
+
+كل “يوزر” = صاحب محل
+وكل محل يملك:
+
+منتجاته
+
+زبائنه
+
+فواتيره
+
+أقساطه
+
+صندوقه
+
+تقاريره
+
+يعني:
+كل البيانات مرتبطة بـ store_id (أو tenant_id)
+
+هذا أهم قرار معماري.
+
+الكيان الأساسي: المستخدم (User)
+
+يمثل صاحب الاشتراك
+
+الحقول:
+
+id
+
+name
+
+phone (إجباري وفريد)
+
+password (أو null مع Google)
+
+auth_provider (phone / google / firebase)
+
+google_id (اختياري)
+
+is_active
+
+created_at
+
+كيان الاشتراك (Subscription)
+
+نظام بسيط بخطة واحدة شهرية
+
+الحقول:
+
+id
+
+user_id
+
+plan_name (Monthly)
+
+start_date
+
+end_date
+
+is_active
+
+payment_status (paid / unpaid)
+
+auto_renew (true / false)
+
+المنطق:
+إذا انتهى الاشتراك → التطبيق يتحول لوضع محدود.
+
+كيان المتجر (Store)
+
+لأن لاحقاً ممكن المستخدم يدير أكثر من محل
+
+الحقول:
+
+id
+
+user_id
+
+name
+
+phone
+
+currency
+
+created_at
+
+كل الجداول التالية ترتبط بـ store_id
+
+ثانياً: كيانات النظام الأساسية
+1) المنتجات (Products)
+
+id
+
+store_id
+
+name
+
+barcode
+
+purchase_price
+
+sale_price
+
+quantity
+
+alert_quantity
+
+notes
+
+2) الزبائن (Customers)
+
+id
+
+store_id
+
+name
+
+phone
+
+address
+
+notes
+
+total_debt
+
+3) الفواتير (Invoices)
+
+id
+
+store_id
+
+customer_id
+
+invoice_number
+
+total_amount
+
+discount
+
+paid_amount
+
+remaining_amount
+
+payment_type (cash / debt / installment)
+
+status (paid / partial / unpaid)
+
+created_at
+
+4) عناصر الفاتورة (Invoice Items)
+
+id
+
+invoice_id
+
+product_id
+
+quantity
+
+price
+
+total
+
+5) الأقساط (Installments Plans)
+
+id
+
+store_id
+
+invoice_id
+
+customer_id
+
+total_amount
+
+down_payment
+
+remaining_amount
+
+installment_count
+
+installment_value
+
+start_date
+
+status (active / completed / cancelled)
+
+6) جدول دفعات الأقساط (Installment Payments)
+
+id
+
+installment_plan_id
+
+amount
+
+payment_date
+
+note
+
+(نظام append-only لتجنب التعارض)
+
+7) الديون (Debt Payments)
+
+id
+
+customer_id
+
+store_id
+
+amount
+
+payment_date
+
+note
+
+8) الصندوق (Cashbox Transactions)
+
+id
+
+store_id
+
+type (in / out)
+
+source (sale / debt / installment / expense / manual)
+
+amount
+
+reference_id (invoice_id أو payment_id)
+
+created_at
+
+note
+
+9) المصروفات (Expenses)
+
+id
+
+store_id
+
+amount
+
+category
+
+date
+
+note
+
+ثالثاً: نظام المزامنة (مهم جداً للـ Offline)
+
+لازم كل جدول يحتوي:
+
+uuid
+
+updated_at
+
+deleted_at (soft delete)
+
+حتى يصير:
+Push & Pull Sync
+
+رابعاً: نظام الصلاحيات (لاحقاً)
+
+مبدئياً:
+
+Owner (صاحب المحل)
+
+Employee (بائع)
+
+جدول:
+Store Users
+
+id
+
+store_id
+
+user_id
+
+role
+
+خامساً: منطق الاشتراك (Business Rules)
+
+عند تسجيل مستخدم جديد:
+
+إنشاء User
+
+إنشاء Store افتراضي
+
+إنشاء Subscription تجريبي (مثلاً 7 أيام)
+
+كل API يتحقق:
+
+هل الاشتراك فعال؟
+
+هل store_id تابع لهذا user؟
+
+عند انتهاء الاشتراك:
+
+يسمح بالعرض فقط
+
+يمنع إنشاء فواتير جديدة
+
+سادساً: تسجيل الدخول
+
+ندعم:
+
+1) رقم هاتف + كلمة مرور
+
+الحالة الأساسية
+
+2) Google OAuth / Firebase
+
+لكن:
+
+رقم الهاتف يبقى إجباري
+
+إذا سجل Google أول مرة → يطلب إدخال رقم الهاتف
+
+سابعاً: العلاقات الأساسية
+
+User يمتلك Stores
+
+Store يمتلك:
+
+Products
+
+Customers
+
+Invoices
+
+Installments
+
+Cashbox
+
+Reports
+
+هذا هو قلب نظام SaaS.
+
+ثامناً: أهم نقطة معمارية
+
+لا تجعل البيانات مرتبطة بـ user_id فقط
+بل دائماً:
+store_id
+
+لأن هذا يسمح:
+
+تعدد فروع مستقبلاً
+
+مشاركة موظفين
+
+فصل بيانات كل محل تماماً
+
+الخلاصة المعمارية
+
+النظام يتكون من:
+
+Users (الحسابات)
+
+Subscriptions (الاشتراك الشهري)
+
+Stores (المحلات)
+
+Products
+
+Customers
+
+Invoices + Items
+
+Installments + Payments
+
+Debt Payments
+
+Cashbox + Expenses
+
+Sync metadata (uuid, updated_at, deleted_at)
+
+هذا الهيكل صحيح 100% لنظام SaaS مبيعات + ديون + أقساط ويستوعب التوسع لاحقاً بدون إعادة بناء.
