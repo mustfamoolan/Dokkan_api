@@ -55,6 +55,7 @@ class AuthController extends Controller
 
         \DB::beginTransaction();
         try {
+            // 1. Create User
             $user = User::create([
                 'name' => $request->name,
                 'phone' => $request->phone,
@@ -63,14 +64,30 @@ class AuthController extends Controller
                 'is_active' => true,
             ]);
 
+            // 2. Create Store
             $store = \App\Models\Store::create([
                 'user_id' => $user->id,
                 'name' => $request->store_name,
                 'phone' => $request->phone,
-                'currency' => 'IQD', // Default for now
+                'currency' => 'IQD',
             ]);
 
+            // 3. Attach User to Store
             $user->stores()->attach($store->id, ['role' => 'owner']);
+
+            // 4. Setup Trial Subscription
+            $trialPlan = \App\Models\SubscriptionPlan::where('name', 'Trial')->first();
+
+            $subscription = \App\Models\Subscription::create([
+                'user_id' => $user->id,
+                'subscription_plan_id' => $trialPlan?->id,
+                'plan_name' => $trialPlan?->name ?? 'Trial',
+                'start_date' => now(),
+                'end_date' => now()->addDays($trialPlan?->duration_days ?? 14),
+                'is_active' => true,
+                'payment_status' => 'paid',
+                'auto_renew' => true,
+            ]);
 
             \DB::commit();
 
@@ -83,10 +100,14 @@ class AuthController extends Controller
                     'role' => $user->role,
                 ],
                 'store' => $store,
+                'subscription' => $subscription,
             ], 201);
         } catch (\Exception $e) {
             \DB::rollBack();
-            return response()->json(['message' => 'حدث خطأ أثناء إنشاء الحساب.'], 500);
+            return response()->json([
+                'message' => 'حدث خطأ أثناء إنشاء الحساب.',
+                'error' => config('app.debug') ? $e->getMessage() : null
+            ], 500);
         }
     }
 

@@ -10,9 +10,11 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table('subscriptions', function (Blueprint $table) {
-            $table->foreignId('subscription_plan_id')->nullable()->constrained()->onDelete('set null');
-        });
+        if (Schema::hasTable('subscriptions') && !Schema::hasColumn('subscriptions', 'subscription_plan_id')) {
+            Schema::table('subscriptions', function (Blueprint $table) {
+                $table->foreignId('subscription_plan_id')->nullable()->constrained()->onDelete('set null');
+            });
+        }
     }
 
     /**

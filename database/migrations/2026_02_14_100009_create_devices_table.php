@@ -10,17 +10,19 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('devices', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('store_id')->constrained()->onDelete('cascade');
-            $table->string('device_name');
-            $table->string('device_id')->unique();
-            $table->timestamp('last_sync_at')->nullable();
-            $table->string('sync_status')->default('good'); // good, delayed, error
-            $table->text('last_error')->nullable();
-            $table->boolean('is_active')->default(true);
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('devices')) {
+            Schema::create('devices', function (Blueprint $table) {
+                $table->id();
+                $table->foreignId('store_id')->constrained()->onDelete('cascade');
+                $table->string('device_name');
+                $table->string('device_id')->unique();
+                $table->timestamp('last_sync_at')->nullable();
+                $table->string('sync_status')->default('good'); // good, delayed, error
+                $table->text('last_error')->nullable();
+                $table->boolean('is_active')->default(true);
+                $table->timestamps();
+            });
+        }
     }
 
     /**
