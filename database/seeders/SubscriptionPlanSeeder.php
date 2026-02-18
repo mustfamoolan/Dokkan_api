@@ -13,6 +13,20 @@ class SubscriptionPlanSeeder extends Seeder
     public function run(): void
     {
         SubscriptionPlan::updateOrCreate(
+            ['name' => 'Free Week'],
+            [
+                'price' => 0,
+                'duration_days' => 7,
+                'features' => [
+                    'max_products' => 30,
+                    'max_customers' => 50,
+                    'is_trial' => true,
+                ],
+                'is_active' => true,
+            ]
+        );
+
+        SubscriptionPlan::updateOrCreate(
             ['name' => 'Trial'],
             [
                 'price' => 0,

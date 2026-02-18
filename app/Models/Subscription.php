@@ -8,6 +8,7 @@ class Subscription extends Model
 {
     protected $fillable = [
         'user_id',
+        'subscription_plan_id',
         'plan_name',
         'start_date',
         'end_date',

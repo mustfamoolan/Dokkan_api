@@ -75,15 +75,15 @@ class AuthController extends Controller
             // 3. Attach User to Store
             $user->stores()->attach($store->id, ['role' => 'owner']);
 
-            // 4. Setup Trial Subscription
-            $trialPlan = \App\Models\SubscriptionPlan::where('name', 'Trial')->first();
+            // 4. Setup Default Subscription (Free Week)
+            $defaultPlan = \App\Models\SubscriptionPlan::where('name', 'Free Week')->first();
 
             $subscription = \App\Models\Subscription::create([
                 'user_id' => $user->id,
-                'subscription_plan_id' => $trialPlan?->id,
-                'plan_name' => $trialPlan?->name ?? 'Trial',
+                'subscription_plan_id' => $defaultPlan?->id,
+                'plan_name' => $defaultPlan?->name ?? 'Free Week',
                 'start_date' => now(),
-                'end_date' => now()->addDays($trialPlan?->duration_days ?? 14),
+                'end_date' => now()->addDays($defaultPlan?->duration_days ?? 7),
                 'is_active' => true,
                 'payment_status' => 'paid',
                 'auto_renew' => true,
