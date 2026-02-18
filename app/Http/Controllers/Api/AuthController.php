@@ -106,7 +106,8 @@ class AuthController extends Controller
             \DB::rollBack();
             return response()->json([
                 'message' => 'حدث خطأ أثناء إنشاء الحساب.',
-                'error' => config('app.debug') ? $e->getMessage() : null
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ], 500);
         }
     }
